@@ -20,7 +20,7 @@ def read_from_txt(path):
     # Parse the data
     for line in raw_lines:
         lines.append(line.strip("\n"))
-
+    print(lines)
     # Return the data
     return lines
 
@@ -73,13 +73,13 @@ async def on_message(message):
     # Parse embed
     total_text = ""
     try:
-        total_text += message.embeds[0]["description"]
+        total_text += message.embeds[0].description
     # Issue: Non embed messages will raise an error. Solution: Ignore.
     except:
         pass
 
     try:
-        total_text += message.embeds[0]["title"]
+        total_text += message.embeds[0].title
     # Issue: Non embed messages will raise an error. Solution: Ignore.
     except:
         pass
@@ -87,17 +87,25 @@ async def on_message(message):
     # If the keyword is found
     keyword_match = keyword_check(total_text)
     if(keyword_match[0]):
-        role = discord.utils.get(message.server.roles, name=read_from_txt("role.txt")[0])
+        role = discord.utils.get(message.guild.roles, name=read_from_txt("role.txt")[0])
+        
         # Create an embed to notify memvers
-        em = discord.Embed(description="Keyword match detected.\n" + role.mention,
+        em = discord.Embed(description="Keyword match detected.\n" ,
                            color=11177686)
         log('i', "Detected keyword match: " + keyword_match[1])
 
         em.add_field(name="Keyword Matched", value=keyword_match[1])
 
-        em.set_footer(text=message.server.name + " x @SharangaIO | Keyword Notify", icon_url="https://i.imgur.com/eN3OhSG.jpg")
+        em.set_footer(text=message.guild.name, icon_url="https://upload.cc/i1/2020/03/23/FiD6qx.png")
 
         # Send the notification
-        await client.send_message(message.channel, embed=em)
+        await message.channel.send(embed=em)
+        
+        
+        if str(role) == "@everyone":
+            await message.channel.send(message.guild.default_role)
+        else:
+            await message.channel.send(role.mention)
+
 
 client.run(read_from_txt("token.txt")[0])

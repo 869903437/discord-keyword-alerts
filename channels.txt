@@ -1,4 +1,2 @@
-shopify-unfiltered
-supreme-us
-supreme-eu
-supreme-jp
+查价频道
+比价频道
